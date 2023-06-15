@@ -20,31 +20,31 @@ namespace base {
             std::size_t size = saveByte < 5u ? 5u : saveByte;
 
             if (VirtualProtect((PVOID)address, size, PAGE_READWRITE, &oldProtect)) {
-                // Êîïèðóåì ïàìÿòü, ÷òîáû ïîòîì âñòàâèòü å¸ â êîíåö
+                // ÐšÐ¾Ð¿Ð¸Ñ€ÑƒÐµÐ¼ Ð¿Ð°Ð¼ÑÑ‚ÑŒ, Ñ‡Ñ‚Ð¾Ð±Ñ‹ Ð¿Ð¾Ñ‚Ð¾Ð¼ Ð²ÑÑ‚Ð°Ð²Ð¸Ñ‚ÑŒ ÐµÑ‘ Ð² ÐºÐ¾Ð½ÐµÑ†
                 std::uint8_t* aSaveByte = NULL;
                 if (isSave) {
                     aSaveByte = (std::uint8_t*)malloc(size);
                     memcpy(aSaveByte, (PVOID)address, size);
                 }
 
-                // NOP'èì ïàìÿòü
+                // NOP'Ð¸Ð¼ Ð¿Ð°Ð¼ÑÑ‚ÑŒ
                 FillMemory((PVOID)address, size, 0x90);
 
-                // Ñîçäà¸ì îñòðîâîê, ãäå áóäåì âûçûâàòü detour
+                // Ð¡Ð¾Ð·Ð´Ð°Ñ‘Ð¼ Ð¾ÑÑ‚Ñ€Ð¾Ð²Ð¾Ðº, Ð³Ð´Ðµ Ð±ÑƒÐ´ÐµÐ¼ Ð²Ñ‹Ð·Ñ‹Ð²Ð°Ñ‚ÑŒ detour
                 const auto    szMemIsland = 5u * 2 + (isSave ? size : 0U);
                 std::uint8_t* memIsland = (std::uint8_t*)malloc(szMemIsland);
                 // VirtualProtect(memIsland, szMemIsland, , NULL);
 
-                // Äåëàåì ïðûæîê íà îñòðîâîê
+                // Ð”ÐµÐ»Ð°ÐµÐ¼ Ð¿Ñ€Ñ‹Ð¶Ð¾Ðº Ð½Ð° Ð¾ÑÑ‚Ñ€Ð¾Ð²Ð¾Ðº
                 *(std::uint8_t*)address = 0xE9; /* jump */
                 *(std::uint32_t*)(address + 1) = (std::uint32_t)memIsland - address - 5u;
 
-                // Âûçûâàåì detour
+                // Ð’Ñ‹Ð·Ñ‹Ð²Ð°ÐµÐ¼ detour
                 *memIsland = 0xE8; /* call */
                 *(uint32_t*)(memIsland + 1) = detour - (uint32_t)memIsland - 5u;
                 memIsland += 5u;
 
-                // Âñòàâëÿåì ñîõðàí¸íûå áàéòû
+                // Ð’ÑÑ‚Ð°Ð²Ð»ÑÐµÐ¼ ÑÐ¾Ñ…Ñ€Ð°Ð½Ñ‘Ð½Ñ‹Ðµ Ð±Ð°Ð¹Ñ‚Ñ‹
                 if (isSave) {
                     memcpy(memIsland, aSaveByte, size);
                     memIsland += size;
@@ -52,7 +52,7 @@ namespace base {
                     free(aSaveByte);
                 }
 
-                // Äåëàåì ïðûæîê íàçàä
+                // Ð”ÐµÐ»Ð°ÐµÐ¼ Ð¿Ñ€Ñ‹Ð¶Ð¾Ðº Ð½Ð°Ð·Ð°Ð´
                 *memIsland = 0xE9; /* jump */
                 *(std::uint32_t*)((std::uint32_t)memIsland + 1) = address + 5u - (std::uint32_t)memIsland - 5u;
 
@@ -70,30 +70,30 @@ namespace base {
             std::size_t size = saveByte < 5u ? 5u : saveByte;
 
             if (VirtualProtect((PVOID)address, size, PAGE_READWRITE, &oldProtect)) {
-                // Êîïèðóåì ïàìÿòü, ÷òîáû ïîòîì âñòàâèòü å¸ â êîíåö
+                // ÐšÐ¾Ð¿Ð¸Ñ€ÑƒÐµÐ¼ Ð¿Ð°Ð¼ÑÑ‚ÑŒ, Ñ‡Ñ‚Ð¾Ð±Ñ‹ Ð¿Ð¾Ñ‚Ð¾Ð¼ Ð²ÑÑ‚Ð°Ð²Ð¸Ñ‚ÑŒ ÐµÑ‘ Ð² ÐºÐ¾Ð½ÐµÑ†
                 std::uint8_t* aSaveByte = NULL;
                 if (isSave) {
                     aSaveByte = (std::uint8_t*)malloc(size);
                     memcpy(aSaveByte, (PVOID)address, size);
                 }
 
-                // NOP'èì ïàìÿòü
+                // NOP'Ð¸Ð¼ Ð¿Ð°Ð¼ÑÑ‚ÑŒ
                 FillMemory((PVOID)address, size, 0x90);
 
-                // Ñîçäà¸ì îñòðîâîê, ãäå áóäåì âûçûâàòü detour
+                // Ð¡Ð¾Ð·Ð´Ð°Ñ‘Ð¼ Ð¾ÑÑ‚Ñ€Ð¾Ð²Ð¾Ðº, Ð³Ð´Ðµ Ð±ÑƒÐ´ÐµÐ¼ Ð²Ñ‹Ð·Ñ‹Ð²Ð°Ñ‚ÑŒ detour
                 const auto    szMemIsland = 5u + rawSize + (isSave ? size : 0U);
                 std::uint8_t* memIsland = (std::uint8_t*)malloc(szMemIsland);
                 // VirtualProtect(memIsland, szMemIsland, , NULL);
 
-                // Äåëàåì ïðûæîê íà îñòðîâîê
+                // Ð”ÐµÐ»Ð°ÐµÐ¼ Ð¿Ñ€Ñ‹Ð¶Ð¾Ðº Ð½Ð° Ð¾ÑÑ‚Ñ€Ð¾Ð²Ð¾Ðº
                 *(std::uint8_t*)address = 0xE9; /* jump */
                 *(std::uint32_t*)(address + 1) = (std::uint32_t)memIsland - address - 5u;
 
-                // Ïåðåíîñèì RAW íà îñòðîâîê
+                // ÐŸÐµÑ€ÐµÐ½Ð¾ÑÐ¸Ð¼ RAW Ð½Ð° Ð¾ÑÑ‚Ñ€Ð¾Ð²Ð¾Ðº
                 memcpy(memIsland, raw, rawSize);
                 memIsland += rawSize;
 
-                // Âñòàâëÿåì ñîõðàí¸íûå áàéòû
+                // Ð’ÑÑ‚Ð°Ð²Ð»ÑÐµÐ¼ ÑÐ¾Ñ…Ñ€Ð°Ð½Ñ‘Ð½Ñ‹Ðµ Ð±Ð°Ð¹Ñ‚Ñ‹
                 if (isSave) {
                     memcpy(memIsland, aSaveByte, size);
                     memIsland += size;
@@ -101,7 +101,7 @@ namespace base {
                     free(aSaveByte);
                 }
 
-                // Äåëàåì ïðûæîê íàçàä
+                // Ð”ÐµÐ»Ð°ÐµÐ¼ Ð¿Ñ€Ñ‹Ð¶Ð¾Ðº Ð½Ð°Ð·Ð°Ð´
                 *memIsland = 0xE9; /* jump */
                 *(std::uint32_t*)((std::uint32_t)memIsland + 1) = address + 5u - (std::uint32_t)memIsland - 5u;
 

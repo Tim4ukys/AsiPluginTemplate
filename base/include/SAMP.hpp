@@ -28,17 +28,17 @@ namespace base {
 
         using cmdproc_t = void(__cdecl*)(const char* param);
         /**
-        * @brief Добавляет команду
-        * @param cmd команда
-        * @param proc обработчик
+        * @brief Р”РѕР±Р°РІР»СЏРµС‚ РєРѕРјР°РЅРґСѓ
+        * @param cmd РєРѕРјР°РЅРґР°
+        * @param proc РѕР±СЂР°Р±РѕС‚С‡РёРє
         * @example pSAMP->addCmd("test", [](const char* param) { pSAMP->addMessage(-1, "Hello wolrd"); });
         */
         [[maybe_unused]] void addCmd(std::string_view cmd, cmdproc_t proc);
         /**
-        * @brief Добавляет сообщение в чат
-        * @param color цвет сообщения(RGB)
-        * @param fmt текст сообщения
-        * @warning Максимальное кол-во символов 144.
+        * @brief Р”РѕР±Р°РІР»СЏРµС‚ СЃРѕРѕР±С‰РµРЅРёРµ РІ С‡Р°С‚
+        * @param color С†РІРµС‚ СЃРѕРѕР±С‰РµРЅРёСЏ(RGB)
+        * @param fmt С‚РµРєСЃС‚ СЃРѕРѕР±С‰РµРЅРёСЏ
+        * @warning РњР°РєСЃРёРјР°Р»СЊРЅРѕРµ РєРѕР»-РІРѕ СЃРёРјРІРѕР»РѕРІ 144.
         */
         [[maybe_unused]] void addMessage(DWORD color, const char* fmt, ...);
 
