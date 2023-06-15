@@ -25,6 +25,7 @@
 #include <string>
 #include <cstring>
 #include <Windows.h>
+#include <xbyak/xbyak.h>
 
 #pragma warning(push)
 #pragma warning(disable : 4996)
@@ -181,6 +182,9 @@ namespace base {
 
         [[maybe_unused]] BOOL setJumpThroughJump(std::uintptr_t address, std::uintptr_t detour,
                                                  std::size_t saveByte, BOOL isSave);
+
+        [[maybe_unused]] BOOL setShellCodeThroughJump(std::uintptr_t address, Xbyak::CodeGenerator& code,
+                                                      std::size_t saveByte, BOOL isSave);
 
         inline void fill(std::uintptr_t addr, std::size_t sz, unsigned int value) {
             DWORD oldProt;

@@ -112,6 +112,35 @@ namespace base {
             return FALSE;
         }
 
+        BOOL setShellCodeThroughJump(std::uintptr_t address, Xbyak::CodeGenerator& code,
+                                     std::size_t saveByte, BOOL isSave) {
+            DWORD oldProtect;
+
+            std::size_t size = saveByte < 5u ? 5u : saveByte;
+
+            if (VirtualProtect((PVOID)address, size, PAGE_READWRITE, &oldProtect)) {
+                // Копируем память, чтобы потом вставить её в конец
+                if (isSave) {
+                    code.db(reinterpret_cast<uint8_t*>(address), saveByte);
+                }
+
+                // NOP'им память
+                FillMemory((PVOID)address, size, 0x90);
+
+                // Делаем прыжок с островка назад
+                code.jmp(PVOID(address + 5u));
+
+                // Делаем прыжок на островок
+                *(std::uint8_t*)address = 0xE9; /* jump */
+                *(std::uint32_t*)(address + 1) = code.getCode<std::uint32_t>() - address - 5u;
+
+                VirtualProtect((PVOID)address, size, oldProtect, &oldProtect);
+                return TRUE;
+            }
+
+            return FALSE;
+        }
+
         inline MODULEINFO GetModuleInfo(char* szModule) {
             MODULEINFO modinfo{};
             HMODULE    hModule = GetModuleHandleA(szModule);
