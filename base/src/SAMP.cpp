@@ -78,7 +78,6 @@ namespace base {
             m_initNetGameCodeShell->push(uint32_t(this));
             void(__stdcall * initNetGameShell)(SAMP*, PVOID) = [](SAMP* pthis, PVOID netGame) {
                 if (!pthis->pNetGame) {
-                    pthis->pNetGame = PVOID(0x1);
                     pthis->initPointers();
                     pthis->pNetGame = netGame;
                     pthis->events.onInitNetGame();
