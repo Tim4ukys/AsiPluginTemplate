@@ -8,7 +8,7 @@
 ### game
 ```
 gta_sa.exe v1.00 US - https://www.blast.hk/threads/1830/
-SA-MP v037(r3-1, r4-2 or r5-1) - https://www.sa-mp.com/download.php
+SA-MP v037(r1, r2, r3-1, r4, r4-2 or r5-1) - https://www.sa-mp.com/download.php
 Silent's ASI Loader - https://www.gtagarage.com/mods/show.php?id=21709
 ```
 ## third-party
