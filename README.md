@@ -1,12 +1,17 @@
 # AsiPluginTemplate
 Шаблон для создания ASI плагина.
 ## dependencies
+### build, vcpkg packets
+```shell
+./vcpkg install polyhook2:x86-windows-static-md xbyak:x86-windows-static-md boost-signals2:x86-windows-static-md
+```
+### game
 ```
 gta_sa.exe v1.00 US - https://www.blast.hk/threads/1830/
 SA-MP v037(r3-1 or r5-1) - https://www.sa-mp.com/download.php
 Silent's ASI Loader - https://www.gtagarage.com/mods/show.php?id=21709
 ```
-## third party
+## third-party
 ```
 name | author | license | url
 -----------------------------
