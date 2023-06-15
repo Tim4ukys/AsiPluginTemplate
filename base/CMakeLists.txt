@@ -12,7 +12,6 @@ set(SOURCES
 add_library(${PROJECT_NAME} STATIC ${SOURCES} ${PUBLIC_HEADER})
 add_library(ASIPLUGIN::BASE ALIAS ${PROJECT_NAME})
 
-find_package(PolyHook_2 CONFIG REQUIRED)
 find_package(Boost COMPONENTS Signals2)
 target_link_libraries(${PROJECT_NAME} PUBLIC cyanide::cyanide)
 
