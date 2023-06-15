@@ -1,0 +1,3 @@
+[submodule "cyanide"]
+	path = cyanide
+	url = git@github.com:Tim4ukys/cyanide.git
