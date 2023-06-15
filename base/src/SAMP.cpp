@@ -26,6 +26,8 @@ namespace base {
             /*ChatInfo, InputInfo, AddMsg, CmdRect*/
             {0x026E8C8, 0x026E8CC, 0x679F0, 0x69000}, // 037-r3_1
             {0x026EB80, 0x026EB84, 0x68170, 0x69770}, // 037-r5_1
+            {0x026E9F8, 0x026E9FC, 0x68170, 0x69770}, // 037-r4_2
+            //{0x021A0E4, 0x021A0E8, 0x645A0, 0x65AD0}, // 037-r1
         };
         const auto& offs = OFFSETS[static_cast<size_t>(getSAMPVersion())];
 
@@ -38,8 +40,9 @@ namespace base {
     void SAMP::initEvents() {
         const uint64_t OFFSETS[SAMP_COUNT_SUPPORT_VERSIONS][1]{
             /*initNetGame*/
-            {0x000000B5F0},  // 037-r3_1
-            {0x000000B930},  // 037-r5_1
+            {0x000000B5F0}, // 037-r3_1
+            {0x000000B930}, // 037-r5_1
+            {0x000000B930}, // 037-r4_2
         };
         const auto& offs = OFFSETS[static_cast<size_t>(getSAMPVersion())];
 

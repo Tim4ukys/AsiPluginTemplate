@@ -53,11 +53,13 @@ namespace base {
 
         snippets::DynamicLibrary m_samp{"samp.dll"};
 
-        static constexpr size_t SAMP_COUNT_SUPPORT_VERSIONS = 2;
+        static constexpr size_t SAMP_COUNT_SUPPORT_VERSIONS = 3;
     public:
         enum class SAMP_VERSION : size_t {
             v037_r3_1,
             v037_r5_1,
+            v037_r4_2,
+            //v037_r1,
 
             UNKOWN = 0xFF'FF'FF'FF
         };
@@ -65,6 +67,8 @@ namespace base {
             switch (m_samp.getNTHeader()->OptionalHeader.AddressOfEntryPoint) {
             case 0xCC4D0: return SAMP_VERSION::v037_r3_1;
             case 0xCBC90: return SAMP_VERSION::v037_r5_1;
+            case 0xCBCD0: return SAMP_VERSION::v037_r4_2;
+            //case 0x31DF13: return SAMP_VERSION::v037_r1;
             default:
                 throw std::runtime_error("unkown version samp");
                 return SAMP_VERSION::UNKOWN;
