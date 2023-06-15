@@ -17,6 +17,7 @@
 #include <Windows.h>
 #include <cyanide/hook_impl_polyhook.hpp>
 #include <boost/signals2.hpp>
+#include <xbyak/xbyak.h>
 #include "snippets.hpp"
 
 namespace base {
@@ -39,6 +40,7 @@ namespace base {
         * @param color цвет сообщения(RGB)
         * @param fmt текст сообщения
         * @warning Максимальное кол-во символов 144.
+        * @example pSAMP->addMessage(0xFFAA00, "Hello, {FFFFFF}%s!", "mr.putin");
         */
         [[maybe_unused]] void addMessage(DWORD color, const char* fmt, ...);
 
@@ -52,23 +54,28 @@ namespace base {
         [[maybe_unused]] void initPointers();
 
         snippets::DynamicLibrary m_samp{"samp.dll"};
-
-        static constexpr size_t SAMP_COUNT_SUPPORT_VERSIONS = 3;
     public:
         enum class SAMP_VERSION : size_t {
-            v037_r3_1,
-            v037_r5_1,
-            v037_r4_2,
-            //v037_r1,
+            v037_r1,
+            v037_r2,
 
+            v037_r3_1,
+            v037_r4,
+            v037_r4_2,
+            v037_r5_1,
+
+            COUNT,
             UNKOWN = 0xFF'FF'FF'FF
         };
-        inline SAMP_VERSION getSAMPVersion() {
+        static constexpr size_t SAMP_COUNT_SUPPORT_VERSIONS = static_cast<size_t>(SAMP_VERSION::COUNT);
+        inline SAMP_VERSION     getSAMPVersion() {
             switch (m_samp.getNTHeader()->OptionalHeader.AddressOfEntryPoint) {
+            case 0x31DF13: return SAMP_VERSION::v037_r1;
             case 0xCC4D0: return SAMP_VERSION::v037_r3_1;
             case 0xCBC90: return SAMP_VERSION::v037_r5_1;
             case 0xCBCD0: return SAMP_VERSION::v037_r4_2;
-            //case 0x31DF13: return SAMP_VERSION::v037_r1;
+            case 0xCBCB0: return SAMP_VERSION::v037_r4;
+            case 0x3195DD: return SAMP_VERSION::v037_r2;
             default:
                 throw std::runtime_error("unkown version samp");
                 return SAMP_VERSION::UNKOWN;
@@ -83,6 +90,8 @@ namespace base {
         using init_net_game_t = PVOID(__thiscall*)(PVOID, const char*, int, const char*, const char*);
         std::unique_ptr<cyanide::polyhook_x86<init_net_game_t, std::function<PVOID(init_net_game_t, PVOID, const char*, int, const char*, const char*)>>>
             m_initNetGame;
+        std::unique_ptr<Xbyak::CodeGenerator> m_initNetGameCodeShell;
+
 
         [[maybe_unused]] void initEvents();
     };
