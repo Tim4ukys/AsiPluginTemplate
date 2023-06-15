@@ -16,22 +16,21 @@ namespace base {
 
         BOOL setJumpThroughJump(std::uintptr_t address, std::uintptr_t detour, std::size_t saveByte, BOOL isSave) {
             DWORD oldProtect;
-
             std::size_t size = saveByte < 5u ? 5u : saveByte;
 
             if (VirtualProtect((PVOID)address, size, PAGE_READWRITE, &oldProtect)) {
                 // Копируем память, чтобы потом вставить её в конец
                 std::uint8_t* aSaveByte = NULL;
                 if (isSave) {
-                    aSaveByte = (std::uint8_t*)malloc(size);
-                    memcpy(aSaveByte, (PVOID)address, size);
+                    aSaveByte = (std::uint8_t*)malloc(saveByte);
+                    memcpy(aSaveByte, (PVOID)address, saveByte);
                 }
 
                 // NOP'им память
                 FillMemory((PVOID)address, size, 0x90);
 
                 // Создаём островок, где будем вызывать detour
-                const auto    szMemIsland = 5u * 2 + (isSave ? size : 0U);
+                const auto    szMemIsland = 5u * 2 + (isSave ? saveByte : 0U);
                 std::uint8_t* memIsland = (std::uint8_t*)malloc(szMemIsland);
                 // VirtualProtect(memIsland, szMemIsland, , NULL);
 
@@ -46,8 +45,8 @@ namespace base {
 
                 // Вставляем сохранёные байты
                 if (isSave) {
-                    memcpy(memIsland, aSaveByte, size);
-                    memIsland += size;
+                    memcpy(memIsland, aSaveByte, saveByte);
+                    memIsland += saveByte;
 
                     free(aSaveByte);
                 }
@@ -59,29 +58,27 @@ namespace base {
                 VirtualProtect((PVOID)address, size, oldProtect, &oldProtect);
                 return TRUE;
             }
-
             return FALSE;
         }
 
         BOOL setRawThroughJump(std::uintptr_t address, const char* raw,
                                std::size_t rawSize, std::size_t saveByte, BOOL isSave) {
             DWORD oldProtect;
-
             std::size_t size = saveByte < 5u ? 5u : saveByte;
 
             if (VirtualProtect((PVOID)address, size, PAGE_READWRITE, &oldProtect)) {
                 // Копируем память, чтобы потом вставить её в конец
                 std::uint8_t* aSaveByte = NULL;
                 if (isSave) {
-                    aSaveByte = (std::uint8_t*)malloc(size);
-                    memcpy(aSaveByte, (PVOID)address, size);
+                    aSaveByte = (std::uint8_t*)malloc(saveByte);
+                    memcpy(aSaveByte, (PVOID)address, saveByte);
                 }
 
                 // NOP'им память
                 FillMemory((PVOID)address, size, 0x90);
 
                 // Создаём островок, где будем вызывать detour
-                const auto    szMemIsland = 5u + rawSize + (isSave ? size : 0U);
+                const auto    szMemIsland = 5u + rawSize + (isSave ? saveByte : 0U);
                 std::uint8_t* memIsland = (std::uint8_t*)malloc(szMemIsland);
                 // VirtualProtect(memIsland, szMemIsland, , NULL);
 
@@ -95,8 +92,8 @@ namespace base {
 
                 // Вставляем сохранёные байты
                 if (isSave) {
-                    memcpy(memIsland, aSaveByte, size);
-                    memIsland += size;
+                    memcpy(memIsland, aSaveByte, saveByte);
+                    memIsland += saveByte;
 
                     free(aSaveByte);
                 }
@@ -108,18 +105,16 @@ namespace base {
                 VirtualProtect((PVOID)address, size, oldProtect, &oldProtect);
                 return TRUE;
             }
-
             return FALSE;
         }
 
         BOOL setShellCodeThroughJump(std::uintptr_t address, Xbyak::CodeGenerator& code,
                                      std::size_t saveByte, BOOL isSave) {
             DWORD oldProtect;
-
             std::size_t size = saveByte < 5u ? 5u : saveByte;
 
             if (VirtualProtect((PVOID)address, size, PAGE_READWRITE, &oldProtect)) {
-                // Копируем память, чтобы потом вставить её в конец
+                // Копируем код
                 if (isSave) {
                     code.db(reinterpret_cast<uint8_t*>(address), saveByte);
                 }
@@ -137,7 +132,6 @@ namespace base {
                 VirtualProtect((PVOID)address, size, oldProtect, &oldProtect);
                 return TRUE;
             }
-
             return FALSE;
         }
 

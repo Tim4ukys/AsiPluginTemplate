@@ -202,7 +202,7 @@ namespace base {
          * @return Адрес патерна
          * @auther fredaikis unknowncheats
          */
-        [[maybe_unused]] DWORD FindPattern(char* module, char* pattern, char* mask,
+        [[maybe_unused]] DWORD FindPattern(const char* module, const char* pattern, char* mask,
                                            DWORD startSearchAddr = NULL);
 
     } // namespace patch
