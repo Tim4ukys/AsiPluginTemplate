@@ -31,6 +31,13 @@ namespace base {
         template<typename T, typename... args>
         struct all_same<T, T, args...> : public all_same<T, args...> {};
 
+        /**
+         * Use: if_one_same<T, std::string, const char*, std::string_view>
+         */
+        template<typename T, typename... Args>
+        constexpr bool if_one_same = (std::is_same_v<T, Args> || ...);
+
+
         inline int randomInteger(int min, int max) {
             static std::random_device          rd;
             static std::default_random_engine  e1(rd());

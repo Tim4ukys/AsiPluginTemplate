@@ -9,7 +9,8 @@ project(asibase VERSION 1.0.0)
 set(PUBLIC_HEADER 
     "include/patch.hpp"
     "include/snippets.hpp"
-    "include/SAMP.hpp")
+    "include/SAMP.hpp"
+    "include/config.hpp")
 set(SOURCES 
     "src/patch.cpp"
     "src/snippets.cpp"
