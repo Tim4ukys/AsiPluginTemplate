@@ -1,13 +1,10 @@
-/****************************************************
-*                                                   *
-*    Developer: Tim4ukys                            *
-*                                                   *
-*    email: tim4ukys.dev@yandex.ru                  *
-*    vk: vk.com/tim4ukys                            *
-*                                                   *
-*    License: GNU GPLv3                             *
-*                                                   *
-****************************************************/
+/*
+    AsiPluginTemplate source file
+    Authors: tim4ukys
+    url: https://github.com/Tim4ukys/AsiPluginTemplate
+    tg: https://t.me/tim4ukys
+    Do not delete this comment block. Respect others' work!
+*/
 #include "snippets.hpp"
 
 std::string base::snippets::UTF8_to_CP1251(std::string const& utf8) {

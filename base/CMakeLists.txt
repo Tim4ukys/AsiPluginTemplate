@@ -1,3 +1,9 @@
+# AsiPluginTemplate cmake file
+# Authors: tim4ukys
+# url: https://github.com/Tim4ukys/AsiPluginTemplate
+# tg: https://t.me/tim4ukys
+# Do not delete this comment block. Respect others' work!
+
 project(asibase VERSION 1.0.0)
 
 set(PUBLIC_HEADER 
