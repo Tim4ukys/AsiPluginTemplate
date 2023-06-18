@@ -10,19 +10,34 @@ set(PUBLIC_HEADER
     "include/patch.hpp"
     "include/snippets.hpp"
     "include/SAMP.hpp"
-    "include/config.hpp")
+    "include/config.hpp"
+    "include/hookD3D9.hpp")
 set(SOURCES 
     "src/patch.cpp"
     "src/snippets.cpp"
-    "src/SAMP.cpp")
+    "src/SAMP.cpp" 
+    "src/hookD3D9.cpp")
 
 add_library(${PROJECT_NAME} STATIC ${SOURCES} ${PUBLIC_HEADER})
 add_library(ASIPLUGIN::BASE ALIAS ${PROJECT_NAME})
 
-find_package(Boost COMPONENTS Signals2)
-target_link_libraries(${PROJECT_NAME} PUBLIC cyanide::cyanide)
+set(DIRECTX9_PATH $ENV{DXSDK_DIR})
 
-target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include/")
+find_package(Boost COMPONENTS Signals2)
+target_link_libraries(${PROJECT_NAME} 
+    PUBLIC cyanide::cyanide 
+    PUBLIC "d3d9.lib"
+    PUBLIC "d3dx9.lib"
+)
+
+target_link_directories(${PROJECT_NAME}
+    PUBLIC "${DIRECTX9_PATH}Lib/x86/"
+)
+
+target_include_directories(${PROJECT_NAME} 
+    PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include/"
+    PRIVATE "${DIRECTX9_PATH}Include/"
+)
 
 set_property(TARGET ${PROJECT_NAME}
                 PROPERTY 
