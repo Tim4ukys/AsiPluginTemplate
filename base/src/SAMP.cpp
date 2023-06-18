@@ -7,6 +7,7 @@
 */
 #include <SAMP.hpp>
 #include "patch.hpp"
+#include "base_safe_check.hpp"
 
 namespace base {
 
@@ -20,16 +21,17 @@ namespace base {
     }
 
     void SAMP::initPointers() {
-        const DWORD OFFSETS[SAMP_COUNT_SUPPORT_VERSIONS][4]{
+        const DWORD OFFSETS[6][4]{
+            /*ChatInfo, InputInfo, AddMsg, CmdRect*/
             {0x021A0E4, 0x021A0E8, 0x645A0, 0x65AD0}, // 037-r1
             {0x021A0EC, 0x021A0F0, 0x64670, 0x65BA0}, // 037-r2
 
-            /*ChatInfo, InputInfo, AddMsg, CmdRect*/
             {0x026E8C8, 0x026E8CC, 0x679F0, 0x69000}, // 037-r3_1
             {0x026E9F8, 0x026E9FC, 0x68130, 0x69730}, // 037-r4
             {0x026E9F8, 0x026E9FC, 0x68170, 0x69770}, // 037-r4_2
             {0x026EB80, 0x026EB84, 0x68170, 0x69770}, // 037-r5_1
         };
+        BASE_CHECK_ARRAYSIZE(OFFSETS, SAMP::SAMP_COUNT_SUPPORT_VERSIONS);
         const auto& offs = OFFSETS[static_cast<size_t>(getSAMPVersion())];
 
         pChat = *m_samp.getAddr<PVOID*>(offs[0]);
@@ -39,7 +41,7 @@ namespace base {
     }
 
     void SAMP::initEvents() {
-        const uint64_t OFFSETS[SAMP_COUNT_SUPPORT_VERSIONS][1]{
+        const uint64_t OFFSETS[6][1]{
             /*check isNetGameInit | shell code*/
             {0x2565EF}, // 037-r1
             {0x2CCC84}, // 037-r2
@@ -50,6 +52,7 @@ namespace base {
             {0x000000B930}, // 037-r4_2
             {0x000000B930}, // 037-r5_1
         };
+        BASE_CHECK_ARRAYSIZE(OFFSETS, SAMP::SAMP_COUNT_SUPPORT_VERSIONS);
         const auto  vers = getSAMPVersion();
         const auto& offs = OFFSETS[static_cast<size_t>(vers)];
         

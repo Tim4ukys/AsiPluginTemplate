@@ -52,6 +52,10 @@ namespace base {
 
         snippets::DynamicLibrary m_samp{"samp.dll"};
     public:
+        inline const auto& getDLL() const noexcept {
+            return m_samp;
+        }
+
         enum class SAMP_VERSION : size_t {
             v037_r1,
             v037_r2,
