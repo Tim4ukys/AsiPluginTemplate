@@ -16,10 +16,10 @@
 
 namespace base {
     namespace hooks {
-        class hkD3D9Intefrace {
+        class hkD3D9 {
         public:
-            hkD3D9Intefrace() = default;
-            ~hkD3D9Intefrace() {
+            hkD3D9() = default;
+            ~hkD3D9() {
                 if (m_pDevice) {
                     m_pDevice->Release();
                     m_pDevice = nullptr;
@@ -42,14 +42,14 @@ namespace base {
             std::unique_ptr<cyanide::polyhook_x86<present_t, std::function<HRESULT(present_t, LPDIRECT3DDEVICE9, const LPRECT, const LPRECT, HWND, const LPRGNDATA)>>> m_present;
         };
 
-        class hkD3D9Game : public hkD3D9Intefrace {
+        class hkD3D9Game : public hkD3D9 {
         public:
             [[maybe_unused]] static hkD3D9Game* getRef();
 
             explicit hkD3D9Game();
         };
 
-        class hkD3D9SAMP : public hkD3D9Intefrace {
+        class hkD3D9SAMP : public hkD3D9 {
         public:
             [[maybe_unused]] static hkD3D9SAMP* getRef();
 

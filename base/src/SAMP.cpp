@@ -59,17 +59,16 @@ namespace base {
         if (vers != SAMP_VERSION::v037_r2 && vers != SAMP_VERSION::v037_r1) {
             m_initNetGame = std::make_unique<typename decltype(m_initNetGame)::element_type>(
                 std::move(m_samp.getAddr<init_net_game_t>(offs[0])),
-                std::move(std::bind_front(
-                    [&](init_net_game_t orig,
-                        PVOID pthis, const char* szHost, int nPort, const char* szNick, const char* szPass) -> PVOID {
-                        const auto netGame = orig(pthis, szHost, nPort, szNick, szPass);
-                        if (!pNetGame) {
-                            initPointers();
-                            pNetGame = netGame;
-                            events.onInitNetGame();
-                        }
-                        return netGame;
-                    })));
+                std::move([&](init_net_game_t orig,
+                              PVOID pthis, const char* szHost, int nPort, const char* szNick, const char* szPass) -> PVOID {
+                    const auto netGame = orig(pthis, szHost, nPort, szNick, szPass);
+                    if (!pNetGame) {
+                        initPointers();
+                        pNetGame = netGame;
+                        events.onInitNetGame();
+                    }
+                    return netGame;
+                }));
             m_initNetGame->install();
         } else {
             m_initNetGameCodeShell = std::make_unique<Xbyak::CodeGenerator>();

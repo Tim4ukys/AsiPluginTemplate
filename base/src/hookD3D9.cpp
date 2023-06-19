@@ -28,7 +28,7 @@ namespace base {
         hkD3D9SAMP::hkD3D9SAMP() {
             SAMP::getRef()->events.onInitNetGame.connect(
                 [&]() {
-                    const DWORD OFFSETS[6][1]{
+                    const DWORD OFFSETS[6]{
                         /*pDevice*/
                         {0x21A0A8}, // 037-r1
                         {0x21A0B0}, // 037-r2
@@ -40,13 +40,13 @@ namespace base {
                     BASE_CHECK_ARRAYSIZE(OFFSETS, SAMP::SAMP_COUNT_SUPPORT_VERSIONS);
 
                     const auto& offset = OFFSETS[static_cast<size_t>(SAMP::getRef()->getSAMPVersion())];
-                    m_pDevice = *SAMP::getRef()->getDLL().getAddr<LPDIRECT3DDEVICE9*>(offset[0]);
+                    m_pDevice = *SAMP::getRef()->getDLL().getAddr<LPDIRECT3DDEVICE9*>(offset);
                     m_pDevice->AddRef();
                     initHooks();
                 });
         }
 
-        void hkD3D9Intefrace::initHooks() {
+        void hkD3D9::initHooks() {
             onInitDevice(m_pDevice);
 
             auto getDeviceAddress = [&](int VTableIndex) {
@@ -57,21 +57,23 @@ namespace base {
 
             m_reset = std::make_unique<typename decltype(m_reset)::element_type>(
                 std::move(reset_t(getDeviceAddress(16))),
-                std::move(std::function(
+                std::move(
                     [&](reset_t orig, LPDIRECT3DDEVICE9 pDevice, D3DPRESENT_PARAMETERS* pPresentParams) -> HRESULT {
                         onLostDevice(pDevice, pPresentParams);
                         HRESULT res = orig(pDevice, pPresentParams);
                         onResetDevice(res, pDevice, pPresentParams);
                         return res;
-                    })));
+                    }));
+            m_reset->install();
             m_present = std::make_unique<typename decltype(m_present)::element_type>(
                 std::move(present_t(getDeviceAddress(17))),
-                std::move(std::function(
+                std::move(
                     [&](present_t         orig,
                         LPDIRECT3DDEVICE9 pDevice, const LPRECT pSrcRect, const LPRECT pDestRect, HWND hWnd, const LPRGNDATA pDirtyRegion) -> HRESULT {
                         onPresentEvent(pDevice, pSrcRect, pDestRect, hWnd, pDirtyRegion);
                         return orig(pDevice, pSrcRect, pDestRect, hWnd, pDirtyRegion);
-                    })));
+                    }));
+            m_present->install();
         }
     }
 }
