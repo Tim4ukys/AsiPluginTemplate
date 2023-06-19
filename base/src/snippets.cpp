@@ -6,6 +6,7 @@
     Do not delete this comment block. Respect others' work!
 */
 #include "snippets.hpp"
+#include <sstream>
 
 std::string base::snippets::UTF8_to_CP1251(std::string const& utf8) {
     if (!utf8.empty()) {

@@ -15,7 +15,6 @@
 #include <regex>
 #include <array>
 #include <Windows.h>
-#include <polyhook2/Detour/x86Detour.hpp>
 
 namespace base {
     namespace snippets {
