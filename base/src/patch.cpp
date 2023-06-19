@@ -146,7 +146,7 @@ namespace base {
             return FALSE;
         }
 
-        inline MODULEINFO GetModuleInfo(char* szModule) {
+        inline MODULEINFO GetModuleInfo(const char* szModule) {
             MODULEINFO modinfo{};
             HMODULE    hModule = GetModuleHandleA(szModule);
             if (!hModule)
