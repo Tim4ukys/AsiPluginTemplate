@@ -14,6 +14,7 @@
 #include <variant>
 #include <exception>
 #include <Windows.h>
+#include "snippets.hpp"
 
 #pragma warning(push)
 #pragma warning(disable : 4996)
@@ -32,7 +33,6 @@ namespace base {
         }
     };
 
-    template<typename... Args>
     class ConfigReg {
         HKEY m_hKey;
 
@@ -41,6 +41,7 @@ namespace base {
                                   float, double,
                                   std::wstring, std::string>;
 
+        template<typename... Args>
         explicit ConfigReg(HKEY key, std::wstring_view subKey, Args&&... args) {
             HKEY hKey;
             if (RegOpenKeyW(key, subKey.data(), &hKey) && RegCreateKeyW(key, subKey.data(), &hKey)) {
@@ -97,7 +98,7 @@ namespace base {
 
         template<typename T>
         void checkKey(T&& val) {
-            if constexpr (snippets::if_one_same<T::valueType, std::wstring_view, std::wstring>) {
+            if constexpr (snippets::if_one_same<decltype(T::vl), std::wstring_view, std::wstring>) {
                 DWORD        sz;
                 std::wstring text;
                 if (RegGetValueW(m_hKey, NULL, val.m_keyName.data(), RRF_RT_REG_SZ, NULL, NULL, &sz) == ERROR_SUCCESS) {
@@ -111,7 +112,7 @@ namespace base {
                 }
                 RegSetValueExW(m_hKey, val.m_keyName.data(), NULL, REG_SZ, PBYTE(val.vl.data()), DWORD(val.vl.size() * sizeof(wchar_t)));
                 m_conf.insert({std::move(std::wstring(val.m_keyName)), std::move(std::wstring(val.vl))});
-            } else if constexpr (snippets::if_one_same<T::valueType, std::string_view, std::string>) {
+            } else if constexpr (snippets::if_one_same<decltype(T::vl), std::string_view, std::string>) {
                 std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
                 DWORD                                                  sz;
                 std::string                                            key{std::move(converter.to_bytes(val.m_keyName.data()))};
