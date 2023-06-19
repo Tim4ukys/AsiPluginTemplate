@@ -155,7 +155,7 @@ namespace base {
             return modinfo;
         }
 
-        DWORD FindPattern(char* module, char* pattern, char* mask, DWORD startSearchAddr) {
+        DWORD FindPattern(char* module, char* pattern, const char* mask, DWORD startSearchAddr) {
             // Get all module related information
             MODULEINFO mInfo = GetModuleInfo(module);
 
