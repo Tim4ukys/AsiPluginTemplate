@@ -8,6 +8,8 @@
 #include "patch.hpp"
 #include <Psapi.h>
 
+// TO-DO: Добавить нормальную реализацию копирования байтов, если уже стоял хук на shell code
+
 namespace base {
     namespace patch {
 
@@ -112,15 +114,27 @@ namespace base {
 
             if (VirtualProtect((PVOID)address, size, PAGE_READWRITE, &oldProtect)) {
                 // Копируем код
+                bool isHaveOldShell{};
                 if (isSave) {
-                    code.db(reinterpret_cast<uint8_t*>(address), saveByte);
+                    // Проверяем, стоял ли этот патч тут раньше
+                    if (auto addr = reinterpret_cast<uint8_t*>(address);
+                        isHaveOldShell = (*addr == 0xE9)) {
+                        DWORD targ = *reinterpret_cast<PDWORD>(address + 1) + address + 5;
+                        if (size - 5u > 0) {
+                             code.db(addr + 5u, saveByte - 5u);
+                        }
+                        code.jmp(PVOID(targ));
+                    } else {
+                        code.db(addr, saveByte);
+                    }
                 }
 
                 // NOP'им память
                 FillMemory((PVOID)address, size, 0x90);
 
                 // Делаем прыжок с островка назад
-                code.jmp(PVOID(address + 5u));
+                if (!isHaveOldShell)
+                    code.jmp(PVOID(address + 5u));
 
                 // Делаем прыжок на островок
                 *(std::uint8_t*)address = 0xE9; /* jump */
