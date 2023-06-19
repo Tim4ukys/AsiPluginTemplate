@@ -23,10 +23,6 @@ void addCmd(std::string_view cmd, cmdproc_t proc);
 
 // Отличается от того метода тем, что в качестве обработчика будет std::function.
 // Это позволит использоваться лямбды вырожения с захватом, с bind и т.д.
-// args:
-// cmd - Название команды
-// proc - функция, которая будет вызываться
-using cmdproc_t = void(__cdecl*)(const char* param);
 void addCmd(std::string_view cmd, std::function<void(const char*)> proc);
 
 
