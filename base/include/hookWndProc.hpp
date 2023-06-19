@@ -29,6 +29,7 @@ namespace base {
         };
 
         class hkWndProcGame : public hkWndProc {
+        public:
             explicit hkWndProcGame(wndproc_hk_t proc);
         };
 
