@@ -11,12 +11,16 @@ set(PUBLIC_HEADER
     "include/snippets.hpp"
     "include/SAMP.hpp"
     "include/config.hpp"
-    "include/hookD3D9.hpp")
+    "include/hookD3D9.hpp"
+    "include/hookWndProc.hpp"
+)
 set(SOURCES 
     "src/patch.cpp"
     "src/snippets.cpp"
     "src/SAMP.cpp" 
-    "src/hookD3D9.cpp")
+    "src/hookD3D9.cpp" 
+    "src/hookWndProc.cpp"
+)
 
 add_library(${PROJECT_NAME} STATIC ${SOURCES} ${PUBLIC_HEADER})
 add_library(ASIPLUGIN::BASE ALIAS ${PROJECT_NAME})
