@@ -32,6 +32,15 @@ namespace base {
         * @example pSAMP->addCmd("test", [](const char* param) { pSAMP->addMessage(-1, "Hello wolrd"); });
         */
         [[maybe_unused]] void addCmd(std::string_view cmd, cmdproc_t proc);
+
+        /**
+         * @brief Добавляет команду
+         * @param cmd команда
+         * @param proc обработчик(std::function)
+         * @example pSAMP->addCmd("test", [&](const char* param) { pSAMP->addMessage(-1, "Hello wolrd"); });
+         */
+        [[maybe_unused]] void addCmd(std::string_view cmd, std::function<void(const char*)> proc);
+
         /**
         * @brief Добавляет сообщение в чат
         * @param color цвет сообщения(RGB)

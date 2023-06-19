@@ -91,6 +91,38 @@ namespace base {
         pCmdRect(pInput, cmd.data(), proc);
     }
 
+    class cmdProcWrapper {
+        std::function<void(const char*)> m_callback;
+    public:
+        cmdProcWrapper(std::function<void(const char*)> clb)
+            : m_callback(clb){}
+
+        NOINLINE static void __fastcall proc(cmdProcWrapper* wr, const char* param) {
+            wr->m_callback(param);
+        }
+    };
+
+    void SAMP::addCmd(std::string_view cmd, std::function<void(const char*)> proc) {
+        using namespace Xbyak::util;
+        Xbyak::CodeGenerator* code = new Xbyak::CodeGenerator;
+        cmdProcWrapper*       wrapper = new cmdProcWrapper(proc);
+
+        code->push(ebp);
+        code->mov(ebp, esp);
+
+        code->mov(ecx, DWORD(wrapper));
+        code->push(ecx);
+        code->mov(edx, edi);
+        code->push(edx);
+        code->call(&cmdProcWrapper::proc);
+
+        code->mov(esp, ebp);
+        code->pop(ebp);
+        code->ret();
+
+        pCmdRect(pInput, cmd.data(), code->getCode<cmdproc_t>());
+    }
+
     void SAMP::addMessage(DWORD color, const char* fmt, ...) {
         char buff[512]{};
 
