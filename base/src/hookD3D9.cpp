@@ -9,7 +9,8 @@
 #include "base_safe_check.hpp"
 #include <xbyak/xbyak.h>
 #include <functional>
-#include <patch.hpp>
+#include "patch.hpp"
+#include "game_offsets.hpp"
 
 namespace base {
     namespace hooks {
@@ -19,7 +20,7 @@ namespace base {
             pthis->initHooks();
         }
         hkD3D9::hkD3D9() {
-            auto pDevice = *reinterpret_cast<LPDIRECT3DDEVICE9*>(0xC97C28);
+            auto pDevice = *offsets::vars::D3D9DEVICE.get<LPDIRECT3DDEVICE9*>();
             if (!pDevice) {
                 using namespace Xbyak::util;
                 Xbyak::CodeGenerator* code = new Xbyak::CodeGenerator;

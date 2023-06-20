@@ -9,6 +9,7 @@
 #include <Windows.h>
 #include "SAMP.hpp"
 #include "base_safe_check.hpp"
+#include "game_offsets.hpp"
 
 namespace base {
     namespace hooks {
@@ -32,7 +33,7 @@ namespace base {
 
         hkWndProcGame::hkWndProcGame(wndproc_hk_t proc) {
             m_wndProc = std::make_unique<typename decltype(m_wndProc)::element_type>(
-                std::move(reinterpret_cast<wndproc_t>(0x747EB0)),
+                std::move(offsets::func::WNDPROC.get<wndproc_t>()),
                 std::move(proc));
             m_wndProc->install();
         }
