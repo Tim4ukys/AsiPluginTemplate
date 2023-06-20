@@ -14,16 +14,11 @@
 namespace base {
     namespace hooks {
 
-        hkD3D9Game* hkD3D9Game::getRef() {
-            static std::unique_ptr<hkD3D9Game> singl = std::make_unique<hkD3D9Game>();
-            return singl.get();
-        }
-
-        void __fastcall hkD3D9Game::hkInit(hkD3D9Game* pthis, LPDIRECT3DDEVICE9 pDevice) {
+        void __fastcall hkD3D9::hkInit(hkD3D9* pthis, LPDIRECT3DDEVICE9 pDevice) {
             pthis->m_pDevice = pDevice;
             pthis->initHooks();
         }
-        hkD3D9Game::hkD3D9Game() {
+        hkD3D9::hkD3D9() {
             auto pDevice = *reinterpret_cast<LPDIRECT3DDEVICE9*>(0xC97C28);
             if (!pDevice) {
                 using namespace Xbyak::util;
@@ -45,34 +40,9 @@ namespace base {
             }
         }
 
-
-        hkD3D9SAMP* hkD3D9SAMP::getRef() {
-            static std::unique_ptr<hkD3D9SAMP> singl = std::make_unique<hkD3D9SAMP>();
+        hkD3D9* hkD3D9::getRef() {
+            static std::unique_ptr<hkD3D9> singl = std::make_unique<hkD3D9>();
             return singl.get();
-        }
-        hkD3D9SAMP::hkD3D9SAMP() {
-            const DWORD OFFSETS[6]{
-                /*pDevice*/
-                {0x21A0A8}, // 037-r1
-                {0x21A0B0}, // 037-r2
-                {0x26E888}, // 037-r3_1
-                {0x26E9B8}, // 037-r4
-                {0x26E9B8}, // 037-r4_2
-                {0x26EB40}, // 037-r5_1
-            };
-            BASE_CHECK_ARRAYSIZE(OFFSETS, SAMP::SAMP_COUNT_SUPPORT_VERSIONS);
-            const auto& offset = OFFSETS[static_cast<size_t>(SAMP::getRef()->getSAMPVersion())];
-            auto        pDevice = SAMP::getRef()->getDLL().getAddr<LPDIRECT3DDEVICE9*>(offset);
-            if (!*pDevice) {
-                SAMP::getRef()->events.onInitNetGame.connect(
-                    [&, pdevice = pDevice]() {
-                        m_pDevice = *pdevice;
-                        initHooks();
-                    });
-            } else {
-                m_pDevice = *pDevice;
-                initHooks();
-            }
         }
 
         void hkD3D9::initHooks() {

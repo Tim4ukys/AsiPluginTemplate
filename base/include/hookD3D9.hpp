@@ -18,9 +18,13 @@
 namespace base {
     namespace hooks {
         class hkD3D9 {
+            static void __fastcall hkInit(hkD3D9Game* pthis, LPDIRECT3DDEVICE9 pDevice);
+
         public:
-            hkD3D9() = default;
+            explicit hkD3D9();
             ~hkD3D9() = default;
+
+            [[maybe_unused]] static hkD3D9* getRef();
 
             boost::signals2::signal<void(LPDIRECT3DDEVICE9, const LPRECT, const LPRECT, HWND, const LPRGNDATA)> onPresentEvent;
             boost::signals2::signal<void(LPDIRECT3DDEVICE9, D3DPRESENT_PARAMETERS*)>                            onLostDevice;
@@ -36,22 +40,6 @@ namespace base {
             using present_t = HRESULT(__stdcall*)(LPDIRECT3DDEVICE9, const LPRECT, const LPRECT, HWND, const LPRGNDATA);
             std::unique_ptr<cyanide::polyhook_x86<reset_t, std::function<HRESULT(reset_t, LPDIRECT3DDEVICE9, D3DPRESENT_PARAMETERS*)>>>                                m_reset;
             std::unique_ptr<cyanide::polyhook_x86<present_t, std::function<HRESULT(present_t, LPDIRECT3DDEVICE9, const LPRECT, const LPRECT, HWND, const LPRGNDATA)>>> m_present;
-        };
-
-        class hkD3D9Game : public hkD3D9 {
-            static void __fastcall hkInit(hkD3D9Game* pthis, LPDIRECT3DDEVICE9 pDevice);
-
-        public:
-            [[maybe_unused]] static hkD3D9Game* getRef();
-
-            explicit hkD3D9Game();
-        };
-
-        class hkD3D9SAMP : public hkD3D9 {
-        public:
-            [[maybe_unused]] static hkD3D9SAMP* getRef();
-
-            explicit hkD3D9SAMP();
         };
 
     } // namespace hooks
