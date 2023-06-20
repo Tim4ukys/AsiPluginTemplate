@@ -29,7 +29,7 @@ namespace base {
         }
 
         namespace vars {
-            constexpr offset<0xC17054> WIN_LPHWND; // LPHWND*
+            constexpr offset<0xC17054> WIN_HWND; // HWND*
             constexpr offset<0xC97C20> D3D9; // IDirect3D*
             constexpr offset<0xC97C28> D3D9DEVICE; // IDirect3DDevice9*
         }
