@@ -12,6 +12,7 @@
 #include <memory>
 #include <boost/signals2.hpp>
 #include <cyanide/hook_impl_polyhook.hpp>
+#include <wrl/client.h>
 #include "SAMP.hpp"
 
 namespace base {
@@ -19,12 +20,7 @@ namespace base {
         class hkD3D9 {
         public:
             hkD3D9() = default;
-            ~hkD3D9() {
-                if (m_pDevice) {
-                    m_pDevice->Release();
-                    m_pDevice = nullptr;
-                }
-            }
+            ~hkD3D9() = default;
 
             boost::signals2::signal<void(LPDIRECT3DDEVICE9, const LPRECT, const LPRECT, HWND, const LPRGNDATA)> onPresentEvent;
             boost::signals2::signal<void(LPDIRECT3DDEVICE9, D3DPRESENT_PARAMETERS*)>                            onLostDevice;
@@ -32,7 +28,7 @@ namespace base {
             boost::signals2::signal<void(LPDIRECT3DDEVICE9)>                                                    onInitDevice;
 
         protected:
-            LPDIRECT3DDEVICE9 m_pDevice{};
+            Microsoft::WRL::ComPtr<IDirect3DDevice9> m_pDevice;
 
             [[maybe_unused]] void initHooks();
 
