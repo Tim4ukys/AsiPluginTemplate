@@ -43,6 +43,8 @@ namespace base {
         };
 
         class hkD3D9Game : public hkD3D9 {
+            static void __fastcall hkInit(hkD3D9Game* pthis, LPDIRECT3DDEVICE9 pDevice);
+
         public:
             [[maybe_unused]] static hkD3D9Game* getRef();
 

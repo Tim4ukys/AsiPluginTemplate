@@ -7,6 +7,9 @@
 */
 #include "hookD3D9.hpp"
 #include "base_safe_check.hpp"
+#include <xbyak/xbyak.h>
+#include <functional>
+#include <patch.hpp>
 
 namespace base {
     namespace hooks {
@@ -15,11 +18,29 @@ namespace base {
             static std::unique_ptr<hkD3D9Game> singl = std::make_unique<hkD3D9Game>();
             return singl.get();
         }
-        hkD3D9Game::hkD3D9Game() {
-            m_pDevice = *reinterpret_cast<LPDIRECT3DDEVICE9*>(0xC97C28);
-            m_pDevice->AddRef();
-            initHooks();
+
+        void __fastcall hkD3D9Game::hkInit(hkD3D9Game* pthis, LPDIRECT3DDEVICE9 pDevice) {
+            pDevice->AddRef();
+            pthis->m_pDevice = pDevice;
+            pthis->onInitDevice(pthis->m_pDevice);
+            pthis->initHooks();
         }
+        hkD3D9Game::hkD3D9Game() {
+            using namespace Xbyak::util;
+            Xbyak::CodeGenerator* code = new Xbyak::CodeGenerator;
+            // eax = pDevice
+            code->mov(edx, eax);
+            code->push(eax); // save eax
+            code->push(edx); // pDevice
+            code->mov(ecx, DWORD(this));
+            code->push(ecx); // pthis
+            code->call(hkInit);
+            code->add(esp, 8);
+            code->pop(eax); // get eax
+
+            patch::setShellCodeThroughJump(0x7F67C6, *code, 5u, TRUE);
+        }
+
 
         hkD3D9SAMP* hkD3D9SAMP::getRef() {
             static std::unique_ptr<hkD3D9SAMP> singl = std::make_unique<hkD3D9SAMP>();
