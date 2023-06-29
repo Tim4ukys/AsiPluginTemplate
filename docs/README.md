@@ -18,6 +18,7 @@ Silent's ASI Loader - https://www.gtagarage.com/mods/show.php?id=21709
 ```
 name | author | license | url
 -----------------------------
+xbyak - herumi (Mitsunari Shigeo) - BSD-3-Clause license - https://github.com/herumi/xbyak
 cyanide - r4nx & imring - unlicense - https://github.com/imring/cyanide/
 polyhook2_0 - stevemk14ebr - MIT License - https://github.com/stevemk14ebr/PolyHook_2_0
 boost - Boost Software License - https://www.boost.org/
