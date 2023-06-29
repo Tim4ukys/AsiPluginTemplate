@@ -18,7 +18,7 @@
 namespace base {
     namespace hooks {
         class hkD3D9 {
-            static void __fastcall hkInit(hkD3D9* pthis, LPDIRECT3DDEVICE9 pDevice);
+            static LPDIRECT3DDEVICE9 __fastcall hkInit(hkD3D9* pthis, LPDIRECT3DDEVICE9 pDevice);
 
         public:
             explicit hkD3D9();

@@ -15,25 +15,19 @@
 namespace base {
     namespace hooks {
 
-        void __fastcall hkD3D9::hkInit(hkD3D9* pthis, LPDIRECT3DDEVICE9 pDevice) {
+        LPDIRECT3DDEVICE9 __fastcall hkD3D9::hkInit(hkD3D9* pthis, LPDIRECT3DDEVICE9 pDevice) {
             pthis->m_pDevice = pDevice;
             pthis->initHooks();
+            return pDevice;
         }
         hkD3D9::hkD3D9() {
             auto pDevice = *offsets::vars::D3D9DEVICE.get<LPDIRECT3DDEVICE9*>();
             if (!pDevice) {
                 using namespace Xbyak::util;
                 Xbyak::CodeGenerator* code = new Xbyak::CodeGenerator;
-                // eax = pDevice
                 code->mov(edx, eax);
-                code->push(eax); // save eax
-                code->push(edx); // pDevice
                 code->mov(ecx, DWORD(this));
-                code->push(ecx); // pthis
                 code->call(hkInit);
-                code->add(esp, 8);
-                code->pop(eax); // get eax
-
                 patch::setShellCodeThroughJump(0x7F67C6, *code, 5u, TRUE);
             } else {
                 m_pDevice = pDevice;

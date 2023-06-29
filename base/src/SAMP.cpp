@@ -73,16 +73,19 @@ namespace base {
         } else {
             m_initNetGameCodeShell = std::make_unique<Xbyak::CodeGenerator>();
             using namespace Xbyak::util;
-            m_initNetGameCodeShell->push(eax);
-            m_initNetGameCodeShell->push(uint32_t(this));
-            void(__stdcall * initNetGameShell)(SAMP*, PVOID) = [](SAMP* pthis, PVOID netGame) {
+            m_initNetGameCodeShell->mov(ecx, DWORD(this));
+            m_initNetGameCodeShell->push(edx);
+            m_initNetGameCodeShell->mov(edx, eax);
+            PVOID(__fastcall * initNetGameShell)(SAMP*, PVOID) = [](SAMP* pthis, PVOID netGame)->PVOID {
                 if (!pthis->pNetGame) {
                     pthis->initPointers();
                     pthis->pNetGame = netGame;
                     pthis->events.onInitNetGame();
                 }
+                return netGame;
             };
             m_initNetGameCodeShell->call(initNetGameShell);
+            m_initNetGameCodeShell->pop(edx);
             patch::setShellCodeThroughJump(m_samp.getAddr<uintptr_t>(offs[0]), *m_initNetGameCodeShell, 10u, TRUE);
         }
     }
@@ -107,17 +110,9 @@ namespace base {
         Xbyak::CodeGenerator* code = new Xbyak::CodeGenerator;
         cmdProcWrapper*       wrapper = new cmdProcWrapper(proc);
 
-        code->push(ebp);
-        code->mov(ebp, esp);
-
         code->mov(ecx, DWORD(wrapper));
-        code->push(ecx);
         code->mov(edx, edi);
-        code->push(edx);
         code->call(&cmdProcWrapper::proc);
-
-        code->mov(esp, ebp);
-        code->pop(ebp);
         code->ret();
 
         pCmdRect(pInput, cmd.data(), code->getCode<cmdproc_t>());
