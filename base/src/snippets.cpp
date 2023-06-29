@@ -8,26 +8,47 @@
 #include "snippets.hpp"
 #include <sstream>
 
-std::string base::snippets::UTF8_to_CP1251(std::string const& utf8) {
-    if (!utf8.empty()) {
-        int wchlen = MultiByteToWideChar(CP_UTF8, 0, utf8.c_str(), utf8.size(), NULL, 0);
+std::string base::snippets::CP1251_to_UTF8(std::string_view str) {
+    if (!str.empty()) {
+        int wchlen = MultiByteToWideChar(1251, 0, str.data(), str.size(), NULL, 0);
         if (wchlen > 0 && wchlen != 0xFFFD) {
-            std::vector<wchar_t> wbuf(wchlen);
-            MultiByteToWideChar(CP_UTF8, 0, utf8.c_str(), utf8.size(), &wbuf[0], wchlen);
-            std::vector<char> buf(wchlen);
-            WideCharToMultiByte(1251, 0, &wbuf[0], wchlen, &buf[0], wchlen, 0, 0);
-
-            return std::string(&buf[0], wchlen);
+            std::wstring wbuff;
+            wbuff.resize(wchlen);
+            MultiByteToWideChar(1251, 0, str.data(), str.size(), wbuff.data(), wbuff.size());
+            std::string buff;
+            buff.resize(wchlen);
+            WideCharToMultiByte(CP_UTF8, 0, wbuff.data(), wbuff.size(), buff.data(), buff.size(), 0, 0);
+            return buff;
         }
     }
     return std::string();
 }
 
-std::string base::snippets::ConvertWideToANSI(const wchar_t* wstr) {
-    int         count = WideCharToMultiByte(CP_ACP, 0, wstr, wcslen(wstr), NULL, 0, NULL, NULL);
-    std::string str(count, 0);
-    WideCharToMultiByte(CP_ACP, 0, wstr, -1, &str[0], count, NULL, NULL);
-    return str;
+std::string base::snippets::UTF8_to_CP1251(std::string_view utf8) {
+    if (!utf8.empty()) {
+        int wchlen = MultiByteToWideChar(CP_UTF8, 0, utf8.data(), utf8.size(), NULL, 0);
+        if (wchlen > 0 && wchlen != 0xFFFD) {
+            std::wstring wbuff;
+            wbuff.resize(wchlen);
+            MultiByteToWideChar(CP_UTF8, 0, utf8.data(), utf8.size(), wbuff.data(), wchlen);
+            std::string buff;
+            buff.resize(wchlen);
+            WideCharToMultiByte(1251, 0, wbuff.data(), wchlen, buff.data(), wchlen, 0, 0);
+            return buff;
+        }
+    }
+    return std::string();
+}
+
+std::string base::snippets::ConvertWideToANSI(std::wstring_view wstr) {
+    if (!wstr.empty()) {
+        int         len = WideCharToMultiByte(CP_ACP, 0, wstr.data(), wstr.size(), NULL, 0, NULL, NULL);
+        std::string str;
+        str.resize(len);
+        WideCharToMultiByte(CP_ACP, 0, wstr.data(), wstr.size(), str.data(), len, NULL, NULL);
+        return str;
+    }
+    return std::string();
 }
 
 std::array<int, 3> base::snippets::versionParse(const std::string& vers) {

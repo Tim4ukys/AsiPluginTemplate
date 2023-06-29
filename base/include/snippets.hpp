@@ -11,6 +11,7 @@
 #include <random>
 #include <mutex>
 #include <string>
+#include <string_view>
 #include <memory>
 #include <regex>
 #include <array>
@@ -66,9 +67,9 @@ namespace base {
         };
 
         class DynamicLibrary {
-            std::uintptr_t m_baseAddr;
-            std::mutex     m_lock;
-            std::string    m_moduleName;
+            std::uintptr_t     m_baseAddr;
+            mutable std::mutex m_lock;
+            std::string        m_moduleName;
 
         public:
             DynamicLibrary() = delete;
@@ -77,6 +78,7 @@ namespace base {
                 m_baseAddr = addr;
             }
             inline void updateBase() {
+                std::lock_guard<std::mutex> lock{m_lock};
                 m_baseAddr = (std::uintptr_t)GetModuleHandleA(m_moduleName.c_str());
             }
 
@@ -99,7 +101,7 @@ namespace base {
             }
 
             template<typename fnc>
-            auto getFnc(const char* procName) noexcept {
+            auto getFnc(const char* procName) const noexcept {
                 std::lock_guard<std::mutex> lock{m_lock};
                 return reinterpret_cast<fnc*>(GetProcAddress((HMODULE)m_baseAddr, procName));
             }
@@ -115,18 +117,25 @@ namespace base {
         };
 
         /*
+         * @brief Переводит CP1251 в UTF8 кодировку
+         * @param str строка CP1251
+         * @return строка в кодировке UTF8
+         */
+        [[maybe_unused]] std::string CP1251_to_UTF8(std::string_view str);
+
+        /*
          * @brief Переводит UTF8 в CP1251 кодировку
          * @param utf8 строка UTF8
          * @return строка в кодировке CP1251
          */
-        [[maybe_unused]] std::string UTF8_to_CP1251(std::string const& utf8);
+        [[maybe_unused]] std::string UTF8_to_CP1251(std::string_view utf8);
 
         /**
          * @brief Конвертирует wchar_t в string
          * @param wstr unicode строка
          * @return char строка
          */
-        [[maybe_unused]] std::string ConvertWideToANSI(const wchar_t* wstr);
+        [[maybe_unused]] std::string ConvertWideToANSI(std::wstring_view wstr);
 
         /**
          * @brief Путь до шрифта
