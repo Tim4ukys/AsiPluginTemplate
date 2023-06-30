@@ -34,8 +34,8 @@ namespace base {
         BASE_CHECK_ARRAYSIZE(OFFSETS, SAMP::SAMP_COUNT_SUPPORT_VERSIONS);
         const auto& offs = OFFSETS[static_cast<size_t>(getSAMPVersion())];
 
-        pChat = *m_samp.getAddr<PVOID*>(offs[0]);
-        pInput = *m_samp.getAddr<PVOID*>(offs[1]);
+        pointers.pChat = *m_samp.getAddr<PVOID*>(offs[0]);
+        pointers.pInput = *m_samp.getAddr<PVOID*>(offs[1]);
         pAddMsg = m_samp.getAddr<decltype(pAddMsg)>(offs[2]);
         pCmdRect = m_samp.getAddr<decltype(pCmdRect)>(offs[3]);
     }
@@ -62,9 +62,9 @@ namespace base {
                 std::move([&](init_net_game_t orig,
                               PVOID pthis, const char* szHost, int nPort, const char* szNick, const char* szPass) -> PVOID {
                     const auto netGame = orig(pthis, szHost, nPort, szNick, szPass);
-                    if (!pNetGame) {
+                    if (!pointers.pNetGame) {
                         initPointers();
-                        pNetGame = netGame;
+                        pointers.pNetGame = netGame;
                         events.onInitNetGame();
                     }
                     return netGame;
@@ -77,9 +77,9 @@ namespace base {
             m_initNetGameCodeShell->push(edx);
             m_initNetGameCodeShell->mov(edx, eax);
             PVOID(__fastcall * initNetGameShell)(SAMP*, PVOID) = [](SAMP* pthis, PVOID netGame)->PVOID {
-                if (!pthis->pNetGame) {
+                if (!pthis->pointers.pNetGame) {
                     pthis->initPointers();
-                    pthis->pNetGame = netGame;
+                    pthis->pointers.pNetGame = netGame;
                     pthis->events.onInitNetGame();
                 }
                 return netGame;
@@ -91,7 +91,7 @@ namespace base {
     }
 
     void SAMP::addCmd(std::string_view cmd, cmdproc_t proc) {
-        pCmdRect(pInput, cmd.data(), proc);
+        pCmdRect(pointers.pInput, cmd.data(), proc);
     }
 
     class cmdProcWrapper {
@@ -115,7 +115,7 @@ namespace base {
         code->call(&cmdProcWrapper::proc);
         code->ret();
 
-        pCmdRect(pInput, cmd.data(), code->getCode<cmdproc_t>());
+        pCmdRect(pointers.pInput, cmd.data(), code->getCode<cmdproc_t>());
     }
 
     void SAMP::addMessage(DWORD color, const char* fmt, ...) {
@@ -126,6 +126,6 @@ namespace base {
         vsprintf_s(buff, fmt, args);
         va_end(args);
         buff[144] = '\0';
-        pAddMsg(pChat, color, buff);
+        pAddMsg(pointers.pChat, color, buff);
     }
 }

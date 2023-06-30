@@ -52,9 +52,34 @@ namespace base {
 
         [[maybe_unused]] static SAMP* getRef();
 
-    private:
+    
+        class CPointers {
+            std::uintptr_t m_nAddress{};
+        public:
+            CPointers() = default;
+            ~CPointers() = default;
 
-        PVOID pNetGame{}, pChat, pInput;
+            template<typename T>
+            inline T* get(std::uintptr_t offset) const noexcept {
+                return reinterpret_cast<T*>(m_nAddress + offset);
+            }
+
+            inline operator PVOID() {
+                return reinterpret_cast<PVOID>(m_nAddress);
+            }
+            inline PVOID operator=(const PVOID& a) {
+                m_nAddress = reinterpret_cast<std::uintptr_t>(a);
+                return a;
+            }
+            inline operator bool() const noexcept {
+                return m_nAddress != 0;
+            }
+        };
+        struct {
+            CPointers pNetGame, pChat, pInput;
+        } pointers;
+
+    private:
         void(__thiscall* pAddMsg)(PVOID pthis, DWORD color, const char* text);
         void(__thiscall* pCmdRect)(PVOID pthis, const char* cmd, cmdproc_t cmdProc);
         [[maybe_unused]] void initPointers();
